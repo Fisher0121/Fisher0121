@@ -3,10 +3,12 @@ const fetch = require("node-fetch");
 const cors = require("cors");  // ✅ 引入 CORS
 require("dotenv").config();
 
+console.log("API Key from env:", process.env.GOOGLE_PLACES_API_KEY);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());  // ✅ 允许跨域访问
+app.use(cors());  
 
 app.get("/place", async (req, res) => {
     const place = req.query.place;
@@ -15,11 +17,15 @@ app.get("/place", async (req, res) => {
     }
 
     const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
+    console.log("Using API Key:", GOOGLE_PLACES_API_KEY);  
+
     const googleUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(place)}&inputtype=textquery&fields=photos,rating&key=${GOOGLE_PLACES_API_KEY}`;
 
     try {
         const response = await fetch(googleUrl);
         const data = await response.json();
+        console.log("Google API Response:", data);  
+
         if (data.candidates && data.candidates.length > 0) {
             const placeData = data.candidates[0];
             const rating = placeData.rating || "No rating available";
